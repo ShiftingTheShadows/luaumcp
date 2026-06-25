@@ -361,11 +361,36 @@ minbtn.MouseButton1Click:Connect(function()
 end)
 
 -- mount
-if syn and syn.protect_gui then
-  syn.protect_gui(gui)
-end
-gui.Parent = (gethui and gethui()) or game:GetService("CoreGui")
+local function mountgui()
+  if syn and syn.protect_gui then
+    syn.protect_gui(gui)
+  end
 
-addchat("shadowexec ai ready", "system")
-addchat("model: " .. modelbox.Text, "system")
-print("[shadowexec] loaded with AI gui")
+  local targets = {
+    gethui and gethui(),
+    cloneref and cloneref(game:GetService("CoreGui")),
+    game:GetService("CoreGui"),
+    lp:FindFirstChildOfClass("PlayerGui")
+  }
+
+  for _, target in ipairs(targets) do
+    local ok, err = pcall(function()
+      gui.Parent = target
+    end)
+    if ok and gui.Parent then
+      print("[shadowexec] gui mounted to: " .. tostring(target))
+      return true
+    end
+  end
+
+  warn("[shadowexec] all mount targets failed")
+  return false
+end
+
+if mountgui() then
+  addchat("shadowexec ai ready", "system")
+  addchat("model: " .. modelbox.Text, "system")
+else
+  warn("[shadowexec] gui could not mount — check executor permissions")
+end
+print("[shadowexec] script loaded")
