@@ -216,7 +216,17 @@ Instance.new("UICorner", sendbtn).CornerRadius = UDim.new(0, 4)
 local msgorder = 0
 local minimized = false
 
+local maxchars = 4000
+
+local function truncate(text)
+  if #text > maxchars then
+    return text:sub(1, maxchars) .. "\n... (truncated " .. (#text - maxchars) .. " chars)"
+  end
+  return text
+end
+
 local function addchat(text, role)
+  text = truncate(text)
   msgorder += 1
   local colors = {
     user = Color3.fromHex("264f78"),
@@ -296,7 +306,7 @@ local function aiask(prompt)
     end
 
     local msg = result.choices[1].message.content
-    table.insert(aicontext, { role = "assistant", content = msg })
+    table.insert(aicontext, { role = "assistant", content = truncate(msg) })
     addchat(msg, "ai")
 
     local code = msg:match("```lua%s*(.-)```") or msg:match("```luau%s*(.-)```") or msg:match("```%s*(.-)```")
@@ -310,11 +320,11 @@ local function aiask(prompt)
     if success then
       local fb = "ok: " .. tostring(err)
       addchat(fb, "system")
-      table.insert(aicontext, { role = "user", content = "Execution succeeded. Return: " .. tostring(err) })
+      table.insert(aicontext, { role = "user", content = truncate("Execution succeeded. Return: " .. tostring(err)) })
     else
       local fb = "error: " .. tostring(err)
       addchat(fb, "err")
-      table.insert(aicontext, { role = "user", content = "Execution failed: " .. tostring(err) })
+      table.insert(aicontext, { role = "user", content = truncate("Execution failed: " .. tostring(err)) })
     end
 
     if success and (msg:match("\nDONE%s*$") or msg:match("^DONE%s*$")) then
