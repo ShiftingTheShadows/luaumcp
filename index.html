@@ -8,31 +8,16 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0 }
 html, body { height: 100%; overflow: hidden; background: #171717 }
-body {
-  display: flex;
-  flex-direction: column
-}
-.CodeMirror {
-  flex: 1;
-  font-size: 0.875rem
-}
-.cm-s-default.CodeMirror { background: #171717 }
-.cm-s-default .CodeMirror-gutters { background: #171717; border-right: 1px solid #2d2d2d }
-.cm-s-default .CodeMirror-linenumber { color: #666 }
-.cm-s-default .cm-keyword { color: #569cd6 }
-.cm-s-default .cm-string { color: #ce9178 }
-.cm-s-default .cm-number { color: #b5cea8 }
-.cm-s-default .cm-comment { color: #6a9955 }
-.cm-s-default .cm-builtin { color: #569cd6 }
-.cm-s-default .cm-atom { color: #569cd6 }
-.cm-s-default .cm-def { color: #dcdcaa }
+body { display: flex; flex-direction: column }
 #keybar {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   padding: 0.3rem 0.5rem;
-  flex-shrink: 0
+  flex-shrink: 0;
+  gap: 0.4rem
 }
+#keybar .left { display: flex; align-items: center; gap: 0.3rem }
+#keybar .right { display: flex; align-items: center; gap: 0.3rem; margin-left: auto }
 #keydisp {
   font-family: 'sf mono', 'fira code', 'consolas', monospace;
   font-size: 0.8125rem;
@@ -45,120 +30,154 @@ body {
   transition: filter 0.2s;
   user-select: none
 }
-#keydisp:hover {
-  filter: none
-}
+#keydisp:hover { filter: none }
 button.sm {
   background: transparent; color: #888; border: none; border-radius: 3px;
   padding: 0.25rem 0.5rem; font-size: 0.75rem; cursor: pointer;
   transition: transform 0.15s
 }
 button.sm:hover { color: #d4d4d4; transform: scale(1.1) }
+button.sm.active { color: #569cd6 }
+#workspace { display: flex; flex: 1; min-height: 0 }
+#aipanel {
+  width: 400px; flex-shrink: 0; display: none; flex-direction: column;
+  border-right: 1px solid #3a3a3a; background: #1e1e1e
+}
+#aiheader {
+  padding: 0.35rem 0.5rem;
+  display: flex; gap: 0.3rem; align-items: center; flex-shrink: 0;
+  border-bottom: 1px solid #2d2d2d
+}
+#aimodelsel {
+  background: #2d2d2d; border: 1px solid #3a3a3a; border-radius: 3px;
+  color: #d4d4d4; padding: 0.2rem 0.3rem; font-size: 0.7rem; flex: 1; min-width: 0
+}
+#aikeyinput {
+  background: #2d2d2d; border: 1px solid #3a3a3a; border-radius: 3px;
+  color: #d4d4d4; padding: 0.2rem 0.4rem; font-size: 0.7rem;
+  font-family: 'sf mono', 'fira code', 'consolas', monospace;
+  width: 110px
+}
+#aiclear {
+  background: transparent; border: none; color: #666; cursor: pointer;
+  font-size: 0.75rem; padding: 0.1rem 0.3rem
+}
+#aiclear:hover { color: #d4d4d4 }
+#aimessages {
+  flex: 1; overflow-y: auto; padding: 0.5rem;
+  display: flex; flex-direction: column; gap: 0.35rem
+}
+.aimsg {
+  padding: 0.5rem 0.65rem; border-radius: 6px;
+  font-size: 0.8125rem; line-height: 1.5;
+  white-space: pre-wrap; word-break: break-word;
+  font-family: -apple-system, system-ui, sans-serif
+}
+.aimsg.user {
+  background: #264f78; color: #d4d4d4;
+  margin-left: 2.5rem; align-self: flex-end
+}
+.aimsg.assistant {
+  background: #2d2d2d; color: #d4d4d4;
+  margin-right: 1.5rem; align-self: flex-start
+}
+.aimsg.system {
+  background: #1a2e1a; color: #7db07d;
+  font-size: 0.75rem; font-family: 'sf mono', 'fira code', 'consolas', monospace;
+  align-self: stretch
+}
+.aimsg.err { color: #f44747; background: #2a1a1a }
+.aicodeblock { margin: 0.4rem 0 }
+.aicodeblock pre {
+  background: #141414; padding: 0.5rem; border-radius: 4px;
+  overflow-x: auto; font-family: 'sf mono', 'fira code', 'consolas', monospace;
+  font-size: 0.8rem; color: #d4d4d4; line-height: 1.4
+}
+.execbtn {
+  background: #264f78; color: #ccc; border: none; border-radius: 3px;
+  padding: 0.2rem 0.7rem; font-size: 0.7rem; cursor: pointer; margin-top: 0.25rem
+}
+.execbtn:hover { background: #365f88; color: #fff }
+#aiinputarea {
+  display: flex; gap: 0.3rem; padding: 0.4rem 0.5rem; flex-shrink: 0;
+  border-top: 1px solid #2d2d2d
+}
+#aiprompt {
+  flex: 1; background: #2d2d2d; border: 1px solid #3a3a3a; border-radius: 4px;
+  color: #d4d4d4; padding: 0.35rem 0.5rem; font-size: 0.8125rem;
+  font-family: -apple-system, system-ui, sans-serif;
+  resize: none; min-height: 2.2rem; max-height: 6rem; line-height: 1.4
+}
+#aiprompt:focus { outline: none; border-color: #569cd6 }
+#aisendbtn {
+  background: #264f78; color: #d4d4d4; border: none; border-radius: 4px;
+  padding: 0 0.7rem; font-size: 0.8rem; cursor: pointer; align-self: flex-end;
+  height: 2.2rem
+}
+#aisendbtn:hover { background: #365f88 }
+#aisendbtn:disabled { opacity: 0.4; cursor: default }
+#editorside { display: flex; flex-direction: column; flex: 1; min-width: 0 }
+.CodeMirror { flex: 1; font-size: 0.875rem }
+.cm-s-default.CodeMirror { background: #171717 }
+.cm-s-default .CodeMirror-gutters { background: #171717; border-right: 1px solid #2d2d2d }
+.cm-s-default .CodeMirror-linenumber { color: #666 }
+.cm-s-default .cm-keyword { color: #569cd6 }
+.cm-s-default .cm-string { color: #ce9178 }
+.cm-s-default .cm-number { color: #b5cea8 }
+.cm-s-default .cm-comment { color: #6a9955 }
+.cm-s-default .cm-builtin { color: #569cd6 }
+.cm-s-default .cm-atom { color: #569cd6 }
+.cm-s-default .cm-def { color: #dcdcaa }
 #bar {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  flex-shrink: 0
+  display: flex; align-items: center; gap: 0.25rem;
+  padding: 0.25rem 0.5rem; flex-shrink: 0
 }
 #bar button {
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  width: 48px;
-  height: 48px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center
+  background: transparent; border: none; border-radius: 4px;
+  width: 48px; height: 48px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center
 }
 #bar button svg { fill: #888; transition: fill 0.15s, transform 0.15s }
 #bar button:hover svg { fill: #d4d4d4; transform: scale(1.2) }
 #bot {
-  flex: 0 0 35%;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  border-top: 1px solid #3a3a3a
+  flex: 0 0 35%; display: flex; flex-direction: column;
+  min-height: 0; border-top: 1px solid #3a3a3a
 }
 #cheader {
-  display: flex;
-  align-items: center;
-  padding: 0.15rem 0.5rem;
-  flex-shrink: 0
+  display: flex; align-items: center; padding: 0.15rem 0.5rem; flex-shrink: 0
 }
-#cheader .cl {
-  font-size: 0.75rem;
-  color: #666
-}
+#cheader .cl { font-size: 0.75rem; color: #666 }
 #cclr {
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  width: 34px;
-  height: 34px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: auto
+  background: transparent; border: none; border-radius: 4px;
+  width: 34px; height: 34px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; margin-left: auto
 }
 #cclr svg { fill: #888; transition: fill 0.15s, transform 0.15s }
 #cclr:hover svg { fill: #d4d4d4; transform: scale(1.2) }
 #consoleview {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0.25rem 0;
+  flex: 1; overflow-y: auto; padding: 0.25rem 0;
   font-family: 'sf mono', 'fira code', 'consolas', monospace;
-  font-size: 0.8125rem;
-  line-height: 1.5
+  font-size: 0.8125rem; line-height: 1.5
 }
-.lentry {
-  padding: 0.0625rem 0.75rem;
-  white-space: pre-wrap;
-  word-break: break-all
-}
+.lentry { padding: 0.0625rem 0.75rem; white-space: pre-wrap; word-break: break-all }
 .lentry .ts { color: #555 }
 .lentry.output { color: #d4d4d4 }
 .lentry.warning { color: #d7ba7d }
 .lentry.error { color: #f44747 }
 .lentry.info { color: #569cd6 }
 #toast {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: #2d2d2d;
-  border: 1px solid #3c3c3c;
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  opacity: 0;
-  transform: translateY(10px);
+  position: fixed; bottom: 1.5rem; right: 1.5rem;
+  display: flex; align-items: center; gap: 0.75rem;
+  background: #2d2d2d; border: 1px solid #3c3c3c; border-radius: 8px;
+  padding: 0.75rem 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  opacity: 0; transform: translateY(10px);
   transition: opacity 0.4s ease, transform 0.4s ease;
-  pointer-events: none;
-  z-index: 999
+  pointer-events: none; z-index: 999
 }
-#toast.show {
-  opacity: 1;
-  transform: translateY(0)
-}
-#toast img {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #2b2b2b
-}
-#toast .tn {
-  font-size: 0.875rem;
-  color: #d4d4d4
-}
-#toast .tu {
-  font-size: 0.75rem;
-  color: #888
-}
+#toast.show { opacity: 1; transform: translateY(0) }
+#toast img { width: 36px; height: 36px; border-radius: 50%; background: #2b2b2b }
+#toast .tn { font-size: 0.875rem; color: #d4d4d4 }
+#toast .tu { font-size: 0.75rem; color: #888 }
 </style>
 </head>
 <body>
@@ -169,34 +188,65 @@ button.sm:hover { color: #d4d4d4; transform: scale(1.1) }
     <div class="tu" id="tuser"></div>
   </div>
 </div>
+
 <div id="keybar">
-  <span id="keydisp"></span>
-  <button id="newkeybtn" class="sm">regenerate</button>
-</div>
-<textarea id="editor">print("hello from luaumcp!")</textarea>
-<div id="bar">
-  <button id="runbtn" title="execute">
-    <svg viewBox="0 0 24 24" width="26" height="26">
-      <path d="M17.222 8.685a1.5 1.5 0 0 1 0 2.628l-10 5.498A1.5 1.5 0 0 1 5 15.496V4.502a1.5 1.5 0 0 1 2.223-1.314z"/>
-    </svg>
-  </button>
-  <button id="clrbtn" title="clear editor">
-    <svg viewBox="0 0 24 24" width="26" height="26">
-      <path d="M11.197 2.44a1.5 1.5 0 0 1 2.121 0l4.243 4.242a1.5 1.5 0 0 1 0 2.121L9.364 17H14.5a.5.5 0 1 1 0 1H7.82a1.5 1.5 0 0 1-1.14-.437L2.437 13.32a1.5 1.5 0 0 1 0-2.121zM9.781 15.168l-4.95-4.95l-1.687 1.687a.5.5 0 0 0 0 .707l4.243 4.243a.5.5 0 0 0 .707 0z"/>
-    </svg>
-  </button>
-</div>
-<div id="bot">
-  <div id="cheader">
-    <span class="cl">console</span>
-    <button id="cclr" title="clear console">
-      <svg viewBox="0 0 24 24" width="24" height="24">
-        <path d="M11.197 2.44a1.5 1.5 0 0 1 2.121 0l4.243 4.242a1.5 1.5 0 0 1 0 2.121L9.364 17H14.5a.5.5 0 1 1 0 1H7.82a1.5 1.5 0 0 1-1.14-.437L2.437 13.32a1.5 1.5 0 0 1 0-2.121zM9.781 15.168l-4.95-4.95l-1.687 1.687a.5.5 0 0 0 0 .707l4.243 4.243a.5.5 0 0 0 .707 0z"/>
-      </svg>
-    </button>
+  <div class="left">
+    <button id="aitoggle" class="sm" title="toggle AI panel">AI</button>
   </div>
-  <pre id="consoleview"></pre>
+  <div class="right">
+    <span id="keydisp"></span>
+    <button id="newkeybtn" class="sm">regenerate</button>
+  </div>
 </div>
+
+<div id="workspace">
+  <div id="aipanel">
+    <div id="aiheader">
+      <select id="aimodelsel">
+        <option value="anthropic/claude-sonnet-4">Claude Sonnet 4</option>
+        <option value="openai/gpt-4o">GPT-4o</option>
+        <option value="google/gemini-2.5-flash">Gemini 2.5 Flash</option>
+        <option value="deepseek/deepseek-chat">DeepSeek Chat</option>
+        <option value="meta-llama/llama-4-maverick">Llama 4 Maverick</option>
+      </select>
+      <input id="aikeyinput" type="password" placeholder="OpenRouter key" spellcheck="false">
+      <button id="aiclear" title="clear chat">clear</button>
+    </div>
+    <div id="aimessages"></div>
+    <div id="aiinputarea">
+      <textarea id="aiprompt" placeholder="Ask AI... (Ctrl+Enter to send)" rows="1"></textarea>
+      <button id="aisendbtn">Send</button>
+    </div>
+  </div>
+
+  <div id="editorside">
+    <textarea id="editor">print("hello from shadowexec!")</textarea>
+    <div id="bar">
+      <button id="runbtn" title="execute">
+        <svg viewBox="0 0 24 24" width="26" height="26">
+          <path d="M17.222 8.685a1.5 1.5 0 0 1 0 2.628l-10 5.498A1.5 1.5 0 0 1 5 15.496V4.502a1.5 1.5 0 0 1 2.223-1.314z"/>
+        </svg>
+      </button>
+      <button id="clrbtn" title="clear editor">
+        <svg viewBox="0 0 24 24" width="26" height="26">
+          <path d="M11.197 2.44a1.5 1.5 0 0 1 2.121 0l4.243 4.242a1.5 1.5 0 0 1 0 2.121L9.364 17H14.5a.5.5 0 1 1 0 1H7.82a1.5 1.5 0 0 1-1.14-.437L2.437 13.32a1.5 1.5 0 0 1 0-2.121zM9.781 15.168l-4.95-4.95l-1.687 1.687a.5.5 0 0 0 0 .707l4.243 4.243a.5.5 0 0 0 .707 0z"/>
+        </svg>
+      </button>
+    </div>
+    <div id="bot">
+      <div id="cheader">
+        <span class="cl">console</span>
+        <button id="cclr" title="clear console">
+          <svg viewBox="0 0 24 24" width="24" height="24">
+            <path d="M11.197 2.44a1.5 1.5 0 0 1 2.121 0l4.243 4.242a1.5 1.5 0 0 1 0 2.121L9.364 17H14.5a.5.5 0 1 1 0 1H7.82a1.5 1.5 0 0 1-1.14-.437L2.437 13.32a1.5 1.5 0 0 1 0-2.121zM9.781 15.168l-4.95-4.95l-1.687 1.687a.5.5 0 0 0 0 .707l4.243 4.243a.5.5 0 0 0 .707 0z"/>
+          </svg>
+        </button>
+      </div>
+      <pre id="consoleview"></pre>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/lua/lua.min.js"></script>
 <script>
@@ -206,11 +256,7 @@ const ed = CodeMirror.fromTextArea(document.getElementById('editor'), {
   extraKeys: { 'Ctrl-Enter': () => run() }
 })
 const consoleview = document.getElementById('consoleview')
-const runbtn = document.getElementById('runbtn')
-const clrbtn = document.getElementById('clrbtn')
-const cclr = document.getElementById('cclr')
 const keydisp = document.getElementById('keydisp')
-const newkeybtn = document.getElementById('newkeybtn')
 const toast = document.getElementById('toast')
 const tavatar = document.getElementById('tavatar')
 const tdisplay = document.getElementById('tdisplay')
@@ -256,36 +302,36 @@ function shownotification(name, display, id) {
   tuser.textContent = '@' + name
   toast.className = 'show'
   if (to) clearTimeout(to)
-  to = setTimeout(() => {
-    toast.className = ''
-    to = null
-  }, 5000)
+  to = setTimeout(() => { toast.className = ''; to = null }, 5000)
 }
 
-function run() {
-  const val = ed.getValue().trim()
-  if (!val) return
-
-  fetch('/api/code', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code: val, key: key })
-  }).then(r => r.json()).then(d => {
-    if (!d.id) { addlog('submit failed', 'error'); return }
-    addlog('submitted (id=' + d.id + ')', 'info')
-    const id = d.id
-    const iv = setInterval(() => {
-      fetch('/api/code?id=' + id + '&key=' + encodeURIComponent(key))
-        .then(r => r.json())
-        .then(pd => {
-          if (pd.status === 'done') {
-            clearInterval(iv)
-            addlog('result: ' + (pd.output || '(empty)'), pd.success ? 'output' : 'error')
-          }
-        })
-    }, 500)
-  }).catch(e => addlog('error: ' + e.message, 'error'))
+function runWithResult() {
+  return new Promise((resolve) => {
+    const val = ed.getValue().trim()
+    if (!val) { resolve(null); return }
+    fetch('/api/code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: val, key: key })
+    }).then(r => r.json()).then(d => {
+      if (!d.id) { addlog('submit failed', 'error'); resolve(null); return }
+      addlog('submitted (id=' + d.id + ')', 'info')
+      const iv = setInterval(() => {
+        fetch('/api/code?id=' + d.id + '&key=' + encodeURIComponent(key))
+          .then(r => r.json())
+          .then(pd => {
+            if (pd.status === 'done') {
+              clearInterval(iv)
+              addlog('result: ' + (pd.output || '(empty)'), pd.success ? 'output' : 'error')
+              resolve({ success: pd.success, output: pd.output })
+            }
+          })
+      }, 500)
+    }).catch(e => { addlog('error: ' + e.message, 'error'); resolve(null) })
+  })
 }
+
+function run() { runWithResult() }
 
 fetch('/api/log?key=' + encodeURIComponent(key)).then(r => r.json()).then(d => {
   if (d.seq) seenseq = d.seq
@@ -316,17 +362,196 @@ keydisp.addEventListener('click', () => {
   keydisp.style.filter = 'none'
   setTimeout(() => { keydisp.textContent = orig; keydisp.style.filter = '' }, 1000)
 })
-cclr.addEventListener('click', () => {
+document.getElementById('cclr').addEventListener('click', () => {
   consoleview.innerHTML = ''
   fetch('/api/log?key=' + encodeURIComponent(key)).then(r => r.json()).then(d => {
     if (d.seq) seenseq = d.seq
   }).catch(() => {})
 })
-clrbtn.addEventListener('click', () => { ed.setValue('') })
-runbtn.addEventListener('click', run)
-newkeybtn.addEventListener('click', () => {
-  key = gen()
-  setkey(key)
+document.getElementById('clrbtn').addEventListener('click', () => { ed.setValue('') })
+document.getElementById('runbtn').addEventListener('click', run)
+document.getElementById('newkeybtn').addEventListener('click', () => { key = gen(); setkey(key) })
+
+// ── AI Chat ──
+
+const aipanel = document.getElementById('aipanel')
+const aitoggle = document.getElementById('aitoggle')
+const aimessages = document.getElementById('aimessages')
+const aiprompt = document.getElementById('aiprompt')
+const aisendbtn = document.getElementById('aisendbtn')
+const aikeyinput = document.getElementById('aikeyinput')
+const aimodelsel = document.getElementById('aimodelsel')
+const aiclear = document.getElementById('aiclear')
+
+let aikey = localStorage.getItem('openrouter_key') || ''
+let aimodel = localStorage.getItem('openrouter_model') || 'anthropic/claude-sonnet-4'
+let aihistory = []
+let aisending = false
+
+aikeyinput.value = aikey
+aimodelsel.value = aimodel
+
+const AI_SYSTEM = `You are a Luau scripting assistant for Roblox executors. Generate executable Luau code when asked. The code runs in a script executor with full access to game services (game, workspace, Players, etc). Wrap code in \`\`\`lua blocks. Be concise. If given execution results, use them to debug or iterate. You can use executor globals like request, loadstring, getgenv, hookfunction, etc.`
+
+aitoggle.addEventListener('click', () => {
+  const show = aipanel.style.display === 'none'
+  aipanel.style.display = show ? 'flex' : 'none'
+  aitoggle.classList.toggle('active', show)
+  localStorage.setItem('ai_panel', show ? '1' : '')
+  setTimeout(() => ed.refresh(), 10)
+})
+
+if (localStorage.getItem('ai_panel') === '1') {
+  aipanel.style.display = 'flex'
+  aitoggle.classList.add('active')
+}
+
+aikeyinput.addEventListener('input', () => {
+  aikey = aikeyinput.value.trim()
+  localStorage.setItem('openrouter_key', aikey)
+})
+
+aimodelsel.addEventListener('change', () => {
+  aimodel = aimodelsel.value
+  localStorage.setItem('openrouter_model', aimodel)
+})
+
+aiclear.addEventListener('click', () => {
+  aihistory = []
+  aimessages.innerHTML = ''
+})
+
+function addaimsg(role, content) {
+  const el = document.createElement('div')
+  el.className = 'aimsg ' + role
+  if (role === 'assistant' && content) {
+    renderaitext(el, content)
+  } else {
+    el.textContent = content || ''
+  }
+  aimessages.appendChild(el)
+  aimessages.scrollTop = aimessages.scrollHeight
+  return el
+}
+
+function renderaitext(el, text) {
+  el.innerHTML = ''
+  const parts = text.split(/(```(?:lua|luau)?\n[\s\S]*?```)/g)
+  for (const part of parts) {
+    const m = part.match(/^```(?:lua|luau)?\n([\s\S]*?)```$/)
+    if (m) {
+      const wrap = document.createElement('div')
+      wrap.className = 'aicodeblock'
+      const pre = document.createElement('pre')
+      pre.textContent = m[1]
+      wrap.appendChild(pre)
+      const btn = document.createElement('button')
+      btn.className = 'execbtn'
+      btn.textContent = '▶ Execute'
+      const code = m[1]
+      btn.addEventListener('click', () => aiexec(code))
+      wrap.appendChild(btn)
+      el.appendChild(wrap)
+    } else if (part.trim()) {
+      const span = document.createElement('span')
+      span.textContent = part
+      el.appendChild(span)
+    }
+  }
+}
+
+async function aiexec(code) {
+  ed.setValue(code)
+  addlog('executing from AI...', 'info')
+  const result = await runWithResult()
+  if (result !== null) {
+    const ctx = 'Execution ' + (result.success ? 'succeeded' : 'failed') + ': ' + (result.output || '(no output)')
+    aihistory.push({ role: 'user', content: ctx })
+    addaimsg('system', ctx)
+  }
+}
+
+async function aisend() {
+  const text = aiprompt.value.trim()
+  if (!text || !aikey || aisending) return
+
+  aisending = true
+  aisendbtn.disabled = true
+  addaimsg('user', text)
+  aihistory.push({ role: 'user', content: text })
+  aiprompt.value = ''
+  aiprompt.style.height = ''
+
+  const el = addaimsg('assistant', '')
+  let full = ''
+  let buf = ''
+
+  try {
+    const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + aikey,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': location.origin,
+        'X-Title': 'shadowexec'
+      },
+      body: JSON.stringify({
+        model: aimodel,
+        messages: [{ role: 'system', content: AI_SYSTEM }, ...aihistory],
+        stream: true
+      })
+    })
+
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}))
+      throw new Error(err.error?.message || 'HTTP ' + r.status)
+    }
+
+    const reader = r.body.getReader()
+    const decoder = new TextDecoder()
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buf += decoder.decode(value, { stream: true })
+      const lines = buf.split('\n')
+      buf = lines.pop()
+      for (const line of lines) {
+        if (!line.startsWith('data: ') || line.trim() === 'data: [DONE]') continue
+        try {
+          const d = JSON.parse(line.slice(6))
+          const token = d.choices?.[0]?.delta?.content
+          if (token) {
+            full += token
+            el.textContent = full
+            aimessages.scrollTop = aimessages.scrollHeight
+          }
+        } catch(_) {}
+      }
+    }
+
+    renderaitext(el, full)
+    aihistory.push({ role: 'assistant', content: full })
+    aimessages.scrollTop = aimessages.scrollHeight
+  } catch(e) {
+    el.className = 'aimsg err'
+    el.textContent = 'Error: ' + e.message
+  }
+
+  aisending = false
+  aisendbtn.disabled = false
+}
+
+aisendbtn.addEventListener('click', aisend)
+aiprompt.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault()
+    aisend()
+  }
+})
+aiprompt.addEventListener('input', () => {
+  aiprompt.style.height = 'auto'
+  aiprompt.style.height = Math.min(aiprompt.scrollHeight, 96) + 'px'
 })
 </script>
 </body>
