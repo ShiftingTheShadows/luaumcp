@@ -2,10 +2,10 @@ import { check as ratelimit } from './_ratelimit.mjs'
 
 function origin(req, res) {
   const o = req.headers.origin
-  if (!o || o === 'https://luaumcp.vercel.app' || o === 'http://localhost:3000') {
+  if (!o || o === 'https://shadowexec.vercel.app' || o === 'http://localhost:3000') {
     res.setHeader('access-control-allow-origin', o || '*')
   } else {
-    res.setHeader('access-control-allow-origin', 'https://luaumcp.vercel.app')
+    res.setHeader('access-control-allow-origin', 'https://shadowexec.vercel.app')
   }
 }
 
